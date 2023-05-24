@@ -39,7 +39,7 @@ export default class Nivel1 extends Phaser.Scene {
     const objectosLayer = map.getObjectLayer("objetos");
 
     plataformaLayer.setCollisionByProperty({ colision: true });
-
+    
     console.log("spawn point player", objectosLayer);
 
     // crear el jugador
@@ -52,11 +52,12 @@ export default class Nivel1 extends Phaser.Scene {
     //  Player physics properties. Give the little guy a slight bounce.
     this.jugador.setBounce(0.1);
     this.jugador.setCollideWorldBounds(true);
-
+    
     spawnPoint = map.findObject("objetos", (obj) => obj.name === "salida");
     console.log("spawn point salida ", spawnPoint);
     this.salida = this.physics.add.sprite(spawnPoint.x, spawnPoint.y, "salida").setScale(0.2);
-
+    
+    
     //  Input Events
     this.cursors = this.input.keyboard.createCursorKeys();
 
@@ -95,7 +96,7 @@ export default class Nivel1 extends Phaser.Scene {
       this.jugador,
       this.salida,
       this.esVencedor,
-      () => this.cantidadEstrellas >= 5,
+      () => this.cantidadEstrellas >= 1,
       this
     );
 
