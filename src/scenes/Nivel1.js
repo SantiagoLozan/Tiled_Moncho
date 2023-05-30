@@ -14,7 +14,6 @@ export default class Nivel1 extends Phaser.Scene {
     // data object param {}
 
     this.cantidadEstrellas = 0;
-    console.log("Prueba !");
   }
 
   create() {
@@ -38,12 +37,9 @@ export default class Nivel1 extends Phaser.Scene {
 
     plataformaLayer.setCollisionByProperty({ colision: true });
 
-    console.log("spawn point player", objectosLayer);
-
     // crear el jugador
     // Find in the Object Layer, the name "dude" and get position
     let spawnPoint = map.findObject("objetos", (obj) => obj.name === "jugador");
-    console.log(spawnPoint);
     // The player and its settings
     this.jugador = this.physics.add.sprite(spawnPoint.x, spawnPoint.y, "dude");
 
@@ -52,13 +48,18 @@ export default class Nivel1 extends Phaser.Scene {
     this.jugador.setCollideWorldBounds(true);
 
     spawnPoint = map.findObject("objetos", (obj) => obj.name === "salida");
-    console.log("spawn point salida ", spawnPoint);
     this.salida = this.physics.add
       .sprite(spawnPoint.x, spawnPoint.y, "salida")
       .setScale(0.2);
 
     this.camarajugador = this.cameras.main.startFollow(this.jugador);
-    this.cameras.main.setBounds(0, 0, 800, 600, true);
+    this.cameras.main.setBounds(
+      0,
+      0,
+      map.widthInPixels,
+      map.heightInPixels,
+      true
+    );
 
     //  Input Events
     this.cursors = this.input.keyboard.createCursorKeys();
@@ -69,13 +70,10 @@ export default class Nivel1 extends Phaser.Scene {
     // find object layer
     // if type is "stars", add to stars group
     objectosLayer.objects.forEach((objData) => {
-      //console.log(objData.name, objData.type, objData.x, objData.y);
-
       const { x = 0, y = 0, name } = objData;
       switch (name) {
         case "estrella": {
           // add star to scene
-          // console.log("estrella agregada: ", x, y);
           const star = this.estrellas.create(x, y, "star");
           break;
         }
@@ -98,16 +96,16 @@ export default class Nivel1 extends Phaser.Scene {
       this.jugador,
       this.salida,
       this.esVencedor,
-      () => this.cantidadEstrellas >= 1,
+      () => this.cantidadEstrellas >= 5,
       this
     );
 
     /// mostrar cantidadEstrella en pantalla
     this.cantidadEstrellasTexto = this.add.text(
-      20,
-      20,
+      30,
+      15,
       "Estrellas recolectadas: 0",
-      { fontSize: "32px", fill: "#FFFFFF" }
+      { fontSize: "18px", fill: "#FFFFFF" }
     );
   }
 
@@ -149,7 +147,6 @@ export default class Nivel1 extends Phaser.Scene {
   }
 
   esVencedor(jugador, salida) {
-    console.log("estrellas recolectadas", this.cantidadEstrellas);
     this.scene.start("nivel2", { cantidadEstrellas: this.cantidadEstrellas });
   }
 }

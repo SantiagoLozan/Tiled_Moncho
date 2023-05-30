@@ -13,14 +13,14 @@ export default class Nivel2 extends Phaser.Scene {
     // take data passed from other scenes
     // data object param {}
 
-    this.cantidadEstrellas2 = data.cantidadEstrellas;
-    console.log("Prueba !");
+    console.log("init 2", data);
+
+    this.cantidadEstrellas = data.cantidadEstrellas;
   }
 
   create() {
     // todo / para hacer: texto de puntaje
     const map = this.make.tilemap({ key: "map2" });
-    console.log(map);
 
     // Parameters are the name you gave the tileset in Tiled and then the key of the tileset image in
     // Phaser's cache (i.e. the name you used in preload)
@@ -39,12 +39,9 @@ export default class Nivel2 extends Phaser.Scene {
 
     plataformaLayer.setCollisionByProperty({ colision: true });
 
-    console.log("spawn point player", objectosLayer);
-
     // crear el jugador
     // Find in the Object Layer, the name "dude" and get position
     let spawnPoint = map.findObject("objetos", (obj) => obj.name === "jugador");
-    console.log(spawnPoint);
     // The player and its settings
     this.jugador = this.physics.add.sprite(spawnPoint.x, spawnPoint.y, "dude");
 
@@ -53,11 +50,18 @@ export default class Nivel2 extends Phaser.Scene {
     this.jugador.setCollideWorldBounds(true);
 
     spawnPoint = map.findObject("objetos", (obj) => obj.name === "salida");
-    console.log("spawn point salida ", spawnPoint);
     this.salida = this.physics.add
       .sprite(spawnPoint.x, spawnPoint.y, "salida")
       .setScale(0.2);
 
+    this.camarajugador = this.cameras.main.startFollow(this.jugador);
+    this.cameras.main.setBounds(
+      0,
+      0,
+      map.widthInPixels,
+      map.heightInPixels,
+      true
+    );
     //  Input Events
     this.cursors = this.input.keyboard.createCursorKeys();
 
@@ -67,13 +71,10 @@ export default class Nivel2 extends Phaser.Scene {
     // find object layer
     // if type is "stars", add to stars group
     objectosLayer.objects.forEach((objData) => {
-      //console.log(objData.name, objData.type, objData.x, objData.y);
-
       const { x = 0, y = 0, name } = objData;
       switch (name) {
         case "estrella": {
           // add star to scene
-          // console.log("estrella agregada: ", x, y);
           const star = this.estrellas.create(x, y, "star");
           break;
         }
@@ -96,18 +97,18 @@ export default class Nivel2 extends Phaser.Scene {
       this.jugador,
       this.salida,
       this.esVencedor,
-      () => this.cantidadEstrellas2 >= 2,
+      () => this.cantidadEstrellas >= 8,
       this
     );
 
     /// mostrar cantidadEstrella en pantalla
     this.cantidadEstrellasTexto = this.add.text(
-      20,
-      20,
-      "Estrellas recolectadas: ",
-      this.cantidadEstrellas2,
-      { fontSize: "32px", fill: "#FFFFFF" }
+      30,
+      15,
+      "Estrellas recolectadas: " + this.cantidadEstrellas,
+      { fontSize: "18px", fill: "#FFFFFF" }
     );
+    this.cantidadEstrellasTexto.setScrollFactor(0);
   }
 
   update() {
@@ -140,15 +141,14 @@ export default class Nivel2 extends Phaser.Scene {
 
     // todo / para hacer: sumar puntaje
     //this.cantidadEstrellas = this.cantidadEstrellas + 1;
-    this.cantidadEstrellas2++;
+    this.cantidadEstrellas++;
 
     this.cantidadEstrellasTexto.setText(
-      "Estrellas recolectadas: " + this.cantidadEstrellas2
+      "Estrellas recolectadas: " + this.cantidadEstrellas
     );
   }
 
   esVencedor(jugador, salida) {
-    console.log("estrellas recolectadas", this.cantidadEstrellas2);
-    this.scene.start("nivel3", { cantidadEstrellas2: this.cantidadEstrellas2 });
+    this.scene.start("nivel3", { cantidadEstrellas: this.cantidadEstrellas });
   }
 }
