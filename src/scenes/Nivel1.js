@@ -5,7 +5,6 @@ export default class Nivel1 extends Phaser.Scene {
     // key of the scene
     // the key will be used to start the scene by other scenes
     super("nivel1");
-     
   }
 
   init() {
@@ -16,9 +15,8 @@ export default class Nivel1 extends Phaser.Scene {
 
     this.cantidadEstrellas = 0;
     console.log("Prueba !");
-    
   }
-   
+
   create() {
     // todo / para hacer: texto de puntaje
     const map = this.make.tilemap({ key: "map" });
@@ -39,7 +37,7 @@ export default class Nivel1 extends Phaser.Scene {
     const objectosLayer = map.getObjectLayer("objetos");
 
     plataformaLayer.setCollisionByProperty({ colision: true });
-    
+
     console.log("spawn point player", objectosLayer);
 
     // crear el jugador
@@ -52,12 +50,16 @@ export default class Nivel1 extends Phaser.Scene {
     //  Player physics properties. Give the little guy a slight bounce.
     this.jugador.setBounce(0.1);
     this.jugador.setCollideWorldBounds(true);
-    
+
     spawnPoint = map.findObject("objetos", (obj) => obj.name === "salida");
     console.log("spawn point salida ", spawnPoint);
-    this.salida = this.physics.add.sprite(spawnPoint.x, spawnPoint.y, "salida").setScale(0.2);
-    
-    
+    this.salida = this.physics.add
+      .sprite(spawnPoint.x, spawnPoint.y, "salida")
+      .setScale(0.2);
+
+    this.camarajugador = this.cameras.main.startFollow(this.jugador);
+    this.cameras.main.setBounds(0, 0, 800, 600, true);
+
     //  Input Events
     this.cursors = this.input.keyboard.createCursorKeys();
 
@@ -148,7 +150,6 @@ export default class Nivel1 extends Phaser.Scene {
 
   esVencedor(jugador, salida) {
     console.log("estrellas recolectadas", this.cantidadEstrellas);
-    this.scene.start("nivel2", {cantidadEstrellas: this.cantidadEstrellas} )
-    
+    this.scene.start("nivel2", { cantidadEstrellas: this.cantidadEstrellas });
   }
 }
